@@ -1,4 +1,3 @@
-// Ukrainian keyboard layout
 const keyboardLayout = [
     ['`','1','2','3','4','5','6','7','8','9','0','-','='],
     ['Й','Ц','У','К','Е','Н','Г','Ш','Щ','З','Х','Ї','\\'],
@@ -6,14 +5,17 @@ const keyboardLayout = [
     ['Я','Ч','С','М','И','Т','Ь','Б','Ю','.','SHIFT']
 ];
 
-// Ukrainian letters for practice
 const ukrainianLetters = [
     'А','Б','В','Г','Ґ','Д','Е','Є','Ж','З','И','І','Ї','Й','К','Л','М','Н','О','П','Р','С','Т','У','Ф','Х','Ц','Ч','Ш','Щ','Ь','Ю','Я'
 ];
 
 const keyboardDiv = document.getElementById('keyboard');
 const randomLetterDiv = document.getElementById('random-letter');
-const pressedKeyDiv = document.getElementById('pressed-key');
+const feedbackDiv = document.getElementById('feedback');
+const scoreDiv = document.getElementById('score');
+
+let score = 0;
+let currentLetter = 'А';
 
 // Generate keyboard
 keyboardLayout.forEach(row => {
@@ -23,29 +25,39 @@ keyboardLayout.forEach(row => {
         const keyDiv = document.createElement('div');
         keyDiv.className = 'key';
         keyDiv.textContent = key;
+        // Click support
+        keyDiv.addEventListener('click', () => handleKeyPress(key));
         rowDiv.appendChild(keyDiv);
     });
     keyboardDiv.appendChild(rowDiv);
 });
 
-// Show random letter
 function showRandomLetter() {
-    const letter = ukrainianLetters[Math.floor(Math.random() * ukrainianLetters.length)];
-    randomLetterDiv.textContent = letter;
+    currentLetter = ukrainianLetters[Math.floor(Math.random() * ukrainianLetters.length)];
+    randomLetterDiv.textContent = currentLetter;
 }
 
-// Listen to keyboard press
-document.addEventListener('keydown', (e) => {
-    const key = e.key.toUpperCase();
-    pressedKeyDiv.textContent = `You pressed: ${key}`;
+// Handle key press logic
+function handleKeyPress(key) {
+    document.querySelectorAll('.key').forEach(k => k.classList.remove('correct', 'wrong'));
 
-    document.querySelectorAll('.key').forEach(k => k.classList.remove('pressed'));
-    document.querySelectorAll('.key').forEach(k => {
-        if(k.textContent === key) k.classList.add('pressed');
-    });
+    if (key.toUpperCase() === currentLetter) {
+        feedbackDiv.textContent = 'Correct!';
+        score++;
+        scoreDiv.textContent = `Score: ${score}`;
+        document.querySelectorAll('.key').forEach(k => {
+            if(k.textContent.toUpperCase() === currentLetter) k.classList.add('correct');
+        });
+        setTimeout(showRandomLetter, 400);
+    } else {
+        feedbackDiv.textContent = 'Try again!';
+        document.querySelectorAll('.key').forEach(k => {
+            if(k.textContent.toUpperCase() === key.toUpperCase()) k.classList.add('wrong');
+        });
+    }
+}
 
-    showRandomLetter();
-});
+// Keyboard event
+document.addEventListener('keydown', (e) => handleKeyPress(e.key));
 
-// Initial letter
 showRandomLetter();
