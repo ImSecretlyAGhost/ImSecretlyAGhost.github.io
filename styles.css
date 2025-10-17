@@ -1,44 +1,78 @@
+/* Basic page styling */
 body {
-    font-family: Arial, sans-serif;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #333;
+}
+
+.container {
     text-align: center;
-    padding: 20px;
+    background: #fff;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 800px;
+    width: 100%;
 }
 
-#random-letter {
-    font-size: 3em;
-    margin-bottom: 20px;
+/* Random letter display */
+.letter-display {
+    font-size: 5em;
+    margin: 20px 0;
+    color: #3a3a9f;
+    font-weight: bold;
 }
 
-#keyboard {
+/* Pressed key display */
+.pressed-display {
+    margin-top: 25px;
+    font-size: 1.5em;
+    font-weight: 500;
+    color: #555;
+}
+
+/* Keyboard styling */
+.keyboard {
     display: inline-block;
+    margin-top: 20px;
 }
 
 .keyboard-row {
     display: flex;
     justify-content: center;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 
 .key {
-    width: 50px;
-    height: 50px;
-    margin: 2px;
-    background-color: #d0d0ff;
-    border-radius: 5px;
+    width: 60px;
+    height: 60px;
+    margin: 3px;
+    border-radius: 12px;
+    background: #e0e7ff;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-weight: bold;
+    font-size: 1.2em;
     cursor: pointer;
     user-select: none;
-    font-weight: bold;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px #b0b8ff;
+}
+
+.key:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px #b0b8ff;
 }
 
 .key.pressed {
-    background-color: #ffb3b3;
-}
-
-#pressed-key {
-    margin-top: 20px;
-    font-size: 1.5em;
-    color: #333;
+    background: #ff9a9e;
+    color: #fff;
+    box-shadow: 0 2px #e06b6b;
+    transform: translateY(2px);
 }
