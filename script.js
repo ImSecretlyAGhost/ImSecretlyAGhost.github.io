@@ -6,7 +6,7 @@ const keyboardLayout = [
     ['Я','Ч','С','М','И','Т','Ь','Б','Ю','.','SHIFT']
 ];
 
-// Random Ukrainian letters for practice
+// Ukrainian letters for practice
 const ukrainianLetters = [
     'А','Б','В','Г','Ґ','Д','Е','Є','Ж','З','И','І','Ї','Й','К','Л','М','Н','О','П','Р','С','Т','У','Ф','Х','Ц','Ч','Ш','Щ','Ь','Ю','Я'
 ];
@@ -44,7 +44,7 @@ document.addEventListener('keydown', (e) => {
         if(k.textContent === key) k.classList.add('pressed');
     });
 
-    showRandomLetter(); // Show a new letter after pressing
+    showRandomLetter();
 });
 
 // Initial letter
