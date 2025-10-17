@@ -10,13 +10,14 @@ const ukrainianLetters = [
 ];
 
 const keyboardDiv = document.getElementById('keyboard');
-const letterDisplay = document.getElementById('letter-display');
+const letterSequenceDiv = document.getElementById('letter-sequence');
 const typingInput = document.getElementById('typing-input');
 const feedbackDiv = document.getElementById('feedback');
 const scoreDiv = document.getElementById('score');
 
 let score = 0;
-let currentLetter = 'А';
+let sequence = [];
+let currentIndex = 0;
 
 // Build virtual keyboard
 keyboardLayout.forEach(row => {
@@ -31,30 +32,66 @@ keyboardLayout.forEach(row => {
     keyboardDiv.appendChild(rowDiv);
 });
 
-function showRandomLetter() {
-    currentLetter = ukrainianLetters[Math.floor(Math.random() * ukrainianLetters.length)];
-    letterDisplay.textContent = currentLetter;
-    typingInput.value = '';
-    feedbackDiv.textContent = 'Press the correct key!';
-    document.querySelectorAll('.key').forEach(k => k.classList.remove('correct','wrong'));
+// Generate random sequence of letters
+function generateSequence(length = 5) {
+    sequence = [];
+    for (let i = 0; i < length; i++) {
+        sequence.push(ukrainianLetters[Math.floor(Math.random() * ukrainianLetters.length)]);
+    }
+    currentIndex = 0;
+    renderSequence();
+}
+
+// Render sequence with highlighting
+function renderSequence() {
+    letterSequenceDiv.innerHTML = '';
+    sequence.forEach((letter, idx) => {
+        const span = document.createElement('span');
+        span.textContent = letter;
+        if (idx < currentIndex) span.classList.add('correct');
+        letterSequenceDiv.appendChild(span);
+    });
 }
 
 // Handle typing input
 typingInput.addEventListener('input', (e) => {
     const input = e.target.value.toUpperCase();
     const keyDivs = document.querySelectorAll('.key');
-    keyDivs.forEach(k => k.classList.remove('correct','wrong'));
 
-    if (input === currentLetter) {
-        feedbackDiv.textContent = 'Correct!';
-        score++;
-        scoreDiv.textContent = `Score: ${score}`;
-        keyDivs.forEach(k => { if(k.textContent.toUpperCase() === currentLetter) k.classList.add('correct'); });
-        setTimeout(showRandomLetter, 400);
-    } else if (input.length > 0) {
-        feedbackDiv.textContent = 'Try again!';
-        keyDivs.forEach(k => { if(k.textContent.toUpperCase() === input) k.classList.add('wrong'); });
+    // Reset all key styles
+    keyDivs.forEach(k => k.classList.remove('pressed','wrong'));
+
+    // Highlight pressed key on virtual keyboard
+    const lastChar = input.slice(-1);
+    keyDivs.forEach(k => {
+        if(k.textContent.toUpperCase() === lastChar) k.classList.add('pressed');
+    });
+
+    // Check correctness
+    if (input.length > currentIndex) {
+        if(input[input.length - 1] === sequence[currentIndex]) {
+            currentIndex++;
+            score++;
+            scoreDiv.textContent = `Score: ${score}`;
+            feedbackDiv.textContent = 'Correct!';
+        } else {
+            keyDivs.forEach(k => {
+                if(k.textContent.toUpperCase() === input[input.length - 1]) k.classList.add('wrong');
+            });
+            feedbackDiv.textContent = 'Wrong key!';
+        }
+    }
+
+    renderSequence();
+
+    // When sequence complete, generate a new one
+    if (currentIndex >= sequence.length) {
+        setTimeout(() => {
+            generateSequence(5);
+            typingInput.value = '';
+            feedbackDiv.textContent = 'Start typing!';
+        }, 500);
     }
 });
 
-showRandomLetter();
+generateSequence();
