@@ -1,0 +1,44 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+
+#random-letter {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+#keyboard {
+    display: inline-block;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+.key {
+    width: 50px;
+    height: 50px;
+    margin: 2px;
+    background-color: #d0d0ff;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    font-weight: bold;
+}
+
+.key.pressed {
+    background-color: #ffb3b3;
+}
+
+#pressed-key {
+    margin-top: 20px;
+    font-size: 1.5em;
+    color: #333;
+}
