@@ -1,46 +1,50 @@
+/* General page styling */
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    background: #f0f2f5;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
+    padding: 40px 0;
+}
+
+.app-container {
+    width: 700px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+    padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2em;
     color: #333;
 }
 
-.container {
-    text-align: center;
-    background: #fff;
-    padding: 40px 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    max-width: 800px;
-    width: 100%;
-}
-
-.letter-display {
-    font-size: 5em;
-    margin: 20px 0;
-    color: #3a3a9f;
-    font-weight: bold;
-}
-
 .score {
-    font-size: 1.5em;
-    margin-bottom: 15px;
-}
-
-.pressed-display {
-    margin-top: 25px;
-    font-size: 1.3em;
-    font-weight: 500;
+    margin-top: 8px;
+    font-size: 1.2em;
     color: #555;
 }
 
+/* Virtual keyboard */
 .keyboard {
-    display: inline-block;
-    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
 }
 
 .keyboard-row {
@@ -50,37 +54,62 @@ body {
 }
 
 .key {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     margin: 3px;
-    border-radius: 12px;
+    border-radius: 8px;
     background: #e0e7ff;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    font-size: 1.2em;
-    cursor: pointer;
+    cursor: default;
     user-select: none;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px #b0b8ff;
-}
-
-.key:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px #b0b8ff;
+    box-shadow: 0 3px #b0b8ff;
+    transition: all 0.15s ease;
 }
 
 .key.correct {
     background: #7bed9f;
-    color: #fff;
     box-shadow: 0 2px #4aa96c;
     transform: translateY(2px);
 }
 
 .key.wrong {
     background: #ff6b6b;
-    color: #fff;
     box-shadow: 0 2px #c0392b;
     transform: translateY(2px);
+}
+
+/* Typing area */
+main {
+    width: 100%;
+    text-align: center;
+}
+
+.letter-display {
+    font-size: 4em;
+    margin-bottom: 20px;
+    color: #3a3a9f;
+    font-weight: bold;
+}
+
+#typing-input {
+    width: 100%;
+    font-size: 1.5em;
+    padding: 12px 15px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    outline: none;
+    transition: border 0.2s ease;
+}
+
+#typing-input:focus {
+    border-color: #3a3a9f;
+}
+
+.feedback {
+    margin-top: 15px;
+    font-size: 1.2em;
+    color: #555;
 }
