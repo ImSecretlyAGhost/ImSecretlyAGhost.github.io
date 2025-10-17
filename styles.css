@@ -1,4 +1,3 @@
-/* General page styling */
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -39,7 +38,6 @@ header h1 {
     color: #555;
 }
 
-/* Virtual keyboard */
 .keyboard {
     display: flex;
     flex-direction: column;
@@ -69,7 +67,7 @@ header h1 {
     transition: all 0.15s ease;
 }
 
-.key.correct {
+.key.pressed {
     background: #7bed9f;
     box-shadow: 0 2px #4aa96c;
     transform: translateY(2px);
@@ -87,11 +85,18 @@ main {
     text-align: center;
 }
 
-.letter-display {
-    font-size: 4em;
+.letter-sequence {
+    font-size: 3em;
     margin-bottom: 20px;
-    color: #3a3a9f;
     font-weight: bold;
+}
+
+.letter-sequence .correct {
+    color: #2ecc71;
+}
+
+.letter-sequence .wrong {
+    color: #e74c3c;
 }
 
 #typing-input {
