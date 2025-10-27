@@ -35,37 +35,8 @@
             margin-bottom: 30px;
         }
 
-        /* Modal styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 500px;
-            width: 90%;
-            position: relative;
-        }
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 20px;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-        .open-btn {
+        /* Toggle section button */
+        .toggle-btn {
             display: inline-block;
             margin: 20px 0;
             padding: 10px 20px;
@@ -75,6 +46,9 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .hidden-section {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -82,106 +56,29 @@
     <p><strong>Authors:</strong> Helen L. Wilson and Eunice W. Smith</p>
     <p><strong>Source:</strong> American Journal of Sociology, Vol. 20, No. 2, September 1914, pp. 145-169</p>
 
-    <button class="open-btn">Open Modal</button>
+    <button class="toggle-btn" id="toggleCzech">Show Czech Neighborhoods Info</button>
 
-    <div class="section">
-        <h2>Overview</h2>
-        <p>The Twentieth Ward of Chicago, particularly the blocks between Sixteenth and Eighteenth streets and Union to Burlington, was predominantly inhabited by Slovaks. This district represented a newer wave of Slavic immigration, with Slovaks occupying one-third of households, along with Lithuanians, Bohemians, and Poles. The area had a long history of poor infrastructure and overcrowding.</p>
-    </div>
-
-    <div class="section">
-        <h2>Housing and Population</h2>
-        <ul>
-            <li>Total households surveyed: 854</li>
-            <li>Children under 12: ~32% of the population</li>
-            <li>Adult lodgers: 13%</li>
-            <li>Population density: Average 287 persons per acre</li>
-            <li>Most houses: 1–2 stories, under 5 apartments each</li>
-            <li>Majority of houses (73%) were frame structures, old, and in disrepair</li>
-        </ul>
-    </div>
-
-    <div class="section">
-        <h2>Sanitation and Toilets</h2>
-        <p>Toilet facilities were inadequate and often shared by multiple families:</p>
-        <table>
-            <thead>
-                <tr>
-                    <th>Location of Toilet</th>
-                    <th>Number of Families Using</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Yard</td>
-                    <td>201</td>
-                </tr>
-                <tr>
-                    <td>Cellar</td>
-                    <td>285</td>
-                </tr>
-                <tr>
-                    <td>Under sidewalk</td>
-                    <td>209</td>
-                </tr>
-                <tr>
-                    <td>Hall</td>
-                    <td>72</td>
-                </tr>
-            </tbody>
-        </table>
-        <p>Privacy and convenience were major issues, especially for the sick, elderly, or families with children.</p>
-    </div>
-
-    <div class="section">
-        <h2>Overcrowding and Apartment Conditions</h2>
-        <ul>
-            <li>53% of sleeping rooms were overcrowded according to legal standards</li>
-            <li>Ceilings often below legal height; cellars and basements were damp and unhealthy</li>
-            <li>Windows inadequate for light and ventilation; many opened onto lot-lines or passages</li>
-            <li>Boarders often worsened overcrowding and lack of privacy</li>
-        </ul>
-    </div>
-
-    <div class="section">
-        <h2>Rents and Ownership</h2>
-        <ul>
-            <li>Median rent for a four-room apartment: $9–$9.50, comparable to South Chicago workers</li>
-            <li>17% of apartments owned by occupants; the remainder rented</li>
-            <li>Tenancy duration linked to ownership: 37% of owners lived in their homes for over 15 years</li>
-        </ul>
-    </div>
-
-    <div class="section">
-        <h2>Conclusion</h2>
-        <p>Residents of the Slovak district faced long-term challenges including overcrowding, poor sanitation, inadequate ventilation, and old, deteriorating housing. These conditions highlight systemic issues in urban housing for immigrant populations in early 20th century Chicago.</p>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal-overlay" id="modal">
-        <div class="modal-content">
-            <button class="close-btn" id="close">&times;</button>
-            <h2>Modal Title</h2>
-            <p>This modal will not break your page background color when opened or closed.</p>
-        </div>
+    <div class="hidden-section" id="czechSection">
+        <h3>Czech Neighborhoods in Chicago</h3>
+        <p>
+            Czech immigrants primarily settled in neighborhoods such as Pilsen, Cicero, and Lawndale. Pilsen, originally a predominantly Czech community, became a hub for Czech culture, featuring language schools, bakeries, and churches that preserved traditions brought from Bohemia. Cicero and Lawndale also attracted Czech families who sought work in manufacturing and trades. Many of these neighborhoods developed tight-knit communities where social clubs, religious institutions, and cultural events reinforced a shared identity. Czech immigrants often lived in multi-generational households, allowing traditions to be passed down and maintained despite the pressures of assimilation.
+        </p>
+        <p>
+            Churches such as St. Wenceslaus and St. Procopius became central to community life, offering not only religious services but also cultural education. Social organizations like Sokol clubs promoted physical education, social interaction, and cultural pride. Through these institutions, Czech Americans preserved language, music, and customs while gradually integrating into the larger Chicago community. The imprint of these neighborhoods remains visible today in architecture, local businesses, and cultural festivals.
+        </p>
     </div>
 
     <script>
-        const openBtn = document.querySelector('.open-btn');
-        const modal = document.getElementById('modal');
-        const closeBtn = document.getElementById('close');
+        const toggleBtn = document.getElementById('toggleCzech');
+        const czechSection = document.getElementById('czechSection');
 
-        openBtn.addEventListener('click', () => {
-            modal.style.display = 'flex';
-        });
-
-        closeBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.style.display = 'none';
+        toggleBtn.addEventListener('click', () => {
+            if (czechSection.style.display === 'none' || czechSection.style.display === '') {
+                czechSection.style.display = 'block';
+                toggleBtn.textContent = 'Hide Czech Neighborhoods Info';
+            } else {
+                czechSection.style.display = 'none';
+                toggleBtn.textContent = 'Show Czech Neighborhoods Info';
             }
         });
     </script>
