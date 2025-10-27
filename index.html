@@ -1,0 +1,225 @@
+<!--
+GH Pages single-file site: index.html
+Features:
+- Full black background site with a grid of "cards" (items) that pop out on hover.
+- Click a card to open a modal drawer that loads content from the /pages folder and renders it (supports HTML or Markdown).
+- Keeps the background and layout the same when content opens.
+
+How to use:
+1. Put this file as `index.html` at the root of your GitHub Pages branch (usually `gh-pages` or `main` for user/organization pages).
+2. Create a folder `/pages` at the repo root, and inside it place your content files (either .md or .html).
+3. Create a manifest file at `/pages/manifest.json` containing an array of pages with {"id","title","file"} objects. Example:
+   [
+     { "id": "about", "title": "About", "file": "about.md" },
+     { "id": "notes", "title": "Notes", "file": "notes.html" }
+   ]
+   If no manifest is present, the script falls back to an embedded demo list.
+4. Commit & push — GitHub Pages will serve relative paths and the site will fetch files from /pages.
+
+Notes on CORS & file loading:
+- When hosted on GitHub Pages, fetching `/pages/whatever.md` will work as long as the files are in the same repo and branch being served.
+- If testing locally (file://), fetch won't work — use a local dev server (e.g., `npx http-server`) or publish.
+
+Accessibility & keyboard:
+- Use ESC to close the modal. TAB is trapped inside the modal while open.
+
+Customization:
+- Change colors, spacing, or animations in the CSS below.
+- Replace the markdown renderer (marked) or remove it if you only use HTML files.
+
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Black GH Pages — Content Drawer</title>
+  <link rel="icon" href="data:,"><meta name="color-scheme" content="dark">
+  <!-- Minimal reset + modern UI -->
+  <style>
+    :root{ --bg:#000; --card:#0b0b0b; --muted:#9aa0a6; --accent:#7c5cff; --glass: rgba(255,255,255,0.03);} 
+    html,body{height:100%;}
+    body{
+      margin:0; font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:linear-gradient(180deg,#000 0%, #070707 100%); color:#e6eef8; -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale; display:flex; align-items:center; justify-content:center; padding:32px;
+    }
+    .wrap{width:100%; max-width:1100px}
+    header{display:flex; align-items:center; justify-content:space-between; margin-bottom:20px}
+    h1{font-size:20px; margin:0; letter-spacing:0.4px}
+    p.lead{margin:0; color:var(--muted); font-size:13px}
+
+    /* Grid */
+    .grid{display:grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap:18px}
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px; padding:18px; cursor:pointer; min-height:110px; display:flex; flex-direction:column; justify-content:space-between;
+      border:1px solid rgba(255,255,255,0.03); transition:transform .18s ease, box-shadow .18s ease; box-shadow: 0 6px 18px rgba(2,2,2,0.6);
+    }
+    .card:hover{ transform: translateY(-8px) scale(1.02); box-shadow: 0 22px 40px rgba(2,2,2,0.7);} 
+    .card .title{font-weight:600; font-size:15px}
+    .card .meta{color:var(--muted); font-size:12px}
+
+    /* Modal drawer */
+    .overlay{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:60 }
+    .overlay.show{ display:flex }
+    .backdrop{ position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.7)); }
+    .drawer{
+      position:relative; width:100%; max-width:980px; max-height:86vh; overflow:auto; border-radius:14px; padding:26px; z-index:62;
+      background: linear-gradient(180deg, rgba(12,12,12,0.96), rgba(6,6,6,0.96)); border:1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 40px 120px rgba(0,0,0,0.75);
+    }
+    .drawer header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px }
+    .drawer h2{ margin:0; font-size:18px }
+    .closeBtn{ background:transparent; border:0; color:var(--muted); font-size:15px; cursor:pointer }
+
+    /* content styling */
+    .content{ color:#d7e6ff; line-height:1.6; font-size:15px }
+    .content h3{ margin-top:18px }
+    .content pre{ background: #061423; padding:12px; border-radius:8px; overflow:auto }
+    a{ color:var(--accent); text-decoration:underline }
+
+    /* small screens */
+    @media (max-width:600px){ body{padding:18px} .drawer{ padding:16px; border-radius:10px } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Black GH Pages — Content Drawer</h1>
+        <p class="lead">Click any tile to open content from <code>/pages</code> (supports .md & .html)</p>
+      </div>
+      <div style="text-align:right;color:var(--muted);font-size:12px">Built for GitHub Pages</div>
+    </header>
+
+    <main>
+      <div id="grid" class="grid" aria-live="polite"></div>
+    </main>
+  </div>
+
+  <!-- Overlay / Drawer -->
+  <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="backdrop" id="backdrop"></div>
+    <div class="drawer" role="document" aria-labelledby="drawerTitle" tabindex="-1">
+      <header>
+        <h2 id="drawerTitle">Title</h2>
+        <div style="display:flex; gap:8px; align-items:center">
+          <button class="closeBtn" id="openInNew">Open file</button>
+          <button class="closeBtn" id="closeBtn" aria-label="Close">✕</button>
+        </div>
+      </header>
+      <article id="drawerContent" class="content"><p style="color:var(--muted)">Loading…</p></article>
+    </div>
+  </div>
+
+  <!-- small helpful script -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    // Try to fetch /pages/manifest.json. If not present, fall back to demo list.
+    const fallbackPages = [
+      { id: 'demo-1', title: 'Demo — Welcome', file: 'welcome.md' },
+      { id: 'demo-2', title: 'Demo — Notes', file: 'notes.md' },
+      { id: 'demo-3', title: 'Demo — HTML page', file: 'sample.html' }
+    ];
+
+    const grid = document.getElementById('grid');
+    const overlay = document.getElementById('overlay');
+    const drawer = overlay.querySelector('.drawer');
+    const drawerContent = document.getElementById('drawerContent');
+    const drawerTitle = document.getElementById('drawerTitle');
+    const closeBtn = document.getElementById('closeBtn');
+    const openInNew = document.getElementById('openInNew');
+
+    let pages = [];
+
+    async function loadManifest(){
+      try{
+        const res = await fetch('/pages/manifest.json', {cache:'no-store'});
+        if(!res.ok) throw new Error('No manifest');
+        const list = await res.json();
+        if(Array.isArray(list) && list.length) return list;
+      }catch(e){ console.info('manifest not found, using fallback'); }
+      return fallbackPages;
+    }
+
+    function makeCard(item){
+      const el = document.createElement('button');
+      el.className = 'card';
+      el.type = 'button';
+      el.setAttribute('aria-labelledby', item.id+'-title');
+      el.innerHTML = `<div><div id="${item.id}-title" class="title">${escapeHtml(item.title)}</div><div class="meta">${escapeHtml(item.file)}</div></div>`;
+      el.addEventListener('click', ()=>openDrawer(item));
+      return el;
+    }
+
+    function escapeHtml(str){ return String(str).replace(/[&<>\"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
+
+    async function openDrawer(item){
+      overlay.classList.add('show');
+      overlay.setAttribute('aria-hidden', 'false');
+      drawer.setAttribute('tabindex','0');
+      drawer.focus();
+      drawerTitle.textContent = item.title || item.file;
+      openInNew.onclick = ()=> window.open('/pages/' + item.file, '_blank');
+
+      drawerContent.innerHTML = '<p style="color:var(--muted)">Loading content…</p>';
+      try{
+        const res = await fetch('/pages/' + item.file, {cache:'no-store'});
+        if(!res.ok) throw new Error('Fetch failed: ' + res.status);
+        const text = await res.text();
+        if(item.file.endsWith('.md') || item.file.endsWith('.markdown')){
+          // render markdown
+          drawerContent.innerHTML = marked.parse(text);
+        } else {
+          // treat as HTML
+          drawerContent.innerHTML = text;
+        }
+      }catch(err){
+        console.error(err);
+        drawerContent.innerHTML = `<p style="color:var(--muted)">Could not load file: ${escapeHtml(err.message)}</p>`;
+      }
+
+      // trap focus
+      trapFocus(drawer);
+    }
+
+    function closeDrawer(){
+      overlay.classList.remove('show');
+      overlay.setAttribute('aria-hidden','true');
+      drawer.removeAttribute('tabindex');
+      drawerContent.scrollTop = 0;
+    }
+
+    closeBtn.addEventListener('click', closeDrawer);
+    document.getElementById('backdrop').addEventListener('click', closeDrawer);
+    window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeDrawer(); });
+
+    // small focus trap implementation
+    function trapFocus(modal){
+      const focusable = modal.querySelectorAll('a[href],button,textarea,input,select,[tabindex]:not([tabindex="-1"])');
+      if(!focusable.length) return;
+      const first = focusable[0]; const last = focusable[focusable.length-1];
+      function keyHandler(e){
+        if(e.key !== 'Tab') return;
+        if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+        else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+      }
+      modal.addEventListener('keydown', keyHandler);
+      // remove listener when modal closes
+      const obs = new MutationObserver(()=>{ if(!overlay.classList.contains('show')){ modal.removeEventListener('keydown', keyHandler); obs.disconnect(); } });
+      obs.observe(overlay, {attributes:true, attributeFilter:['class']});
+    }
+
+    // bootstrap
+    (async ()=>{
+      pages = await loadManifest();
+      grid.innerHTML = '';
+      for(const p of pages){ grid.appendChild(makeCard(p)); }
+    })();
+
+  </script>
+</body>
+</html>
