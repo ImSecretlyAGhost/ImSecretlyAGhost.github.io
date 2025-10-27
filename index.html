@@ -17,34 +17,71 @@
     .centered {display:flex; align-items:center; justify-content:center; height:100vh; text-align:center;}
 
     /* ASCII loading screen */
-    #loadingScreen {position:fixed; inset:0; background:#000; color:#0f0; display:flex; align-items:center; justify-content:center; flex-direction:column; z-index:999; transition:opacity 2s ease;}
+    #loadingScreen {
+      position:fixed; inset:0; background:#000; color:#0f0;
+      display:flex; align-items:center; justify-content:center; flex-direction:column;
+      z-index:999; transition:opacity 2s ease;
+    }
     pre {font-size:12px; line-height:12px;}
 
     /* Main content */
-    #mainContent {opacity:0; pointer-events:none; transition:opacity 1.5s ease;}
+    #mainContent {opacity:0; pointer-events:none; transition:opacity 1.5s ease; padding:60px;}
     #mainContent.show {opacity:1; pointer-events:auto; overflow:auto; height:100vh;}
 
-    header {text-align:center; margin-top:40px;}
-    header h1 {font-size:24px; margin-bottom:8px;}
-    header p {color:var(--muted);}
+    header {text-align:center; margin-top:20px;}
+    header h1 {font-size:28px; margin-bottom:8px;}
+    header p {color:var(--muted); font-size:15px; max-width:700px; margin:auto;}
 
-    .image-grid {display:flex; justify-content:center; flex-wrap:wrap; gap:20px; margin-top:40px;}
-    .image-grid img {width:200px; height:200px; object-fit:cover; border-radius:10px; cursor:pointer; transition:transform 0.2s;}
-    .image-grid img:hover {transform:scale(1.05);}
+    .about {max-width:800px; margin:60px auto; text-align:center; line-height:1.6;}
+    .about h2 {font-size:20px; margin-bottom:10px; color:var(--accent);}
+    .about p {color:#ccc; font-size:15px;}
+
+    /* Slide-out button and menu */
+    #menuBtn {
+      position:fixed; left:20px; top:50%; transform:translateY(-50%);
+      background:var(--accent); color:#fff; border:none;
+      padding:12px 16px; border-radius:8px; cursor:pointer; z-index:10;
+      font-weight:bold; transition:background 0.2s;
+    }
+    #menuBtn:hover {background:#9a7cff;}
+
+    #sideMenu {
+      position:fixed; left:-300px; top:0; width:260px; height:100%;
+      background:#111; border-right:1px solid #222;
+      padding:20px; transition:left 0.4s ease; z-index:9; overflow-y:auto;
+    }
+    #sideMenu.show {left:0;}
+    #sideMenu h3 {color:var(--accent);}
+    #sideMenu ul {list-style:none; padding:0;}
+    #sideMenu li {margin:15px 0;}
+    #sideMenu a {
+      color:#ccc; text-decoration:none; font-size:15px;
+      transition:color 0.2s;
+    }
+    #sideMenu a:hover {color:var(--accent);}
 
     /* Popup overlay */
-    #overlay {position:fixed; inset:0; background:var(--overlay-bg); display:none; align-items:center; justify-content:center; z-index:50;}
+    #overlay {
+      position:fixed; inset:0; background:var(--overlay-bg);
+      display:none; align-items:center; justify-content:center; z-index:50;
+    }
     #overlay.show {display:flex;}
-    .popup {background:#111; padding:20px; border-radius:10px; max-width:700px; max-height:80vh; overflow:auto; border:1px solid #222;}
+    .popup {
+      background:#111; padding:20px; border-radius:10px;
+      max-width:700px; max-height:80vh; overflow:auto;
+      border:1px solid #222;
+    }
     .popup h2 {margin-top:0;}
-    .closeBtn {background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; position:absolute; top:20px; right:30px;}
+    .closeBtn {
+      background:none; border:none; color:var(--muted);
+      font-size:20px; cursor:pointer; position:absolute; top:20px; right:30px;
+    }
   </style>
 </head>
 <body>
 
   <div id="loadingScreen">
     <pre>
-
 ░▒▓██████▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓██████▓▒░  
 ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ 
 ░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░        
@@ -52,8 +89,6 @@
 ░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░        
 ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ 
  ░▒▓██████▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓██████▓▒░  
-                                        
-                                        
 
       Czech Immigrants in Chicago
     </pre>
@@ -61,15 +96,28 @@
 
   <div id="mainContent">
     <header>
-      <h1>Topic.</h1>
-      <p>Click an image below to explore more information.</p>
+      <h1>Czech Immigrants in Chicago</h1>
+      <p>Exploring the heritage, challenges, and contributions of Czech immigrants who helped shape Chicago’s identity.</p>
     </header>
 
-    <section class="image-grid">
-      <img src="https://placekitten.com/300/300" data-title="Kitten One" data-file="page1.html" alt="Kitten 1">
-      <img src="https://placekitten.com/301/301" data-title="Kitten Two" data-file="page2.html" alt="Kitten 2">
-      <img src="https://placekitten.com/302/302" data-title="Kitten Three" data-file="page3.html" alt="Kitten 3">
+    <section class="about">
+      <h2>About Me</h2>
+      <p>My name is Joseph, and I chose to research Czech immigrants in Chicago because of my interest in immigrant communities and how they influence local culture. I wanted to learn how traditions, food, and language carried from Europe helped shape modern Chicago neighborhoods.</p>
+
+      <h2>Why I Picked This Topic</h2>
+      <p>This topic connects history, sociology, and culture. I’ve always been fascinated by how immigration waves create lasting impacts on cities from architecture to cuisine to social values. The Czech community’s story is one of resilience and community strength.</p>
     </section>
+
+    <button id="menuBtn">☰</button>
+
+    <nav id="sideMenu">
+      <h3>Explore Pages</h3>
+      <ul>
+        <li><a href="#" data-title="Czech Neighborhoods" data-file="page1.html">Czech Neighborhoods</a></li>
+        <li><a href="#" data-title="Cultural Impact" data-file="page2.html">Cultural Impact</a></li>
+        <li><a href="#" data-title="Notable Figures" data-file="page3.html">Notable Figures</a></li>
+      </ul>
+    </nav>
   </div>
 
   <div id="overlay">
@@ -83,6 +131,8 @@
   <script>
     const loading = document.getElementById('loadingScreen');
     const main = document.getElementById('mainContent');
+    const menuBtn = document.getElementById('menuBtn');
+    const sideMenu = document.getElementById('sideMenu');
 
     // Simulate loading delay and fade out
     setTimeout(() => {
@@ -93,24 +143,30 @@
       }, 2000);
     }, 10000);
 
+    // Toggle side menu
+    menuBtn.addEventListener('click', () => {
+      sideMenu.classList.toggle('show');
+    });
+
     // Overlay logic
     const overlay = document.getElementById('overlay');
     const popupTitle = document.getElementById('popupTitle');
     const popupContent = document.getElementById('popupContent');
     const closeBtn = document.getElementById('closeBtn');
 
-    document.querySelectorAll('.image-grid img').forEach(img => {
-      img.addEventListener('click', async () => {
+    document.querySelectorAll('#sideMenu a').forEach(link => {
+      link.addEventListener('click', async e => {
+        e.preventDefault();
         overlay.classList.add('show');
-        popupTitle.textContent = img.dataset.title;
+        popupTitle.textContent = link.dataset.title;
         popupContent.innerHTML = '<p>Loading...</p>';
         try {
-          const res = await fetch('/pages/' + img.dataset.file);
+          const res = await fetch('/pages/' + link.dataset.file);
           if(!res.ok) throw new Error('Not found');
           const text = await res.text();
           popupContent.innerHTML = text;
         } catch(e) {
-          popupContent.innerHTML = '<p style="color:var(--muted)">Error loading file.</p>';
+          popupContent.innerHTML = '<p style=\"color:var(--muted)\">Error loading file.</p>';
         }
       });
     });
