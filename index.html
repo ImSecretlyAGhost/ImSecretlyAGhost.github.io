@@ -8,78 +8,153 @@
   <meta name="color-scheme" content="dark">
   <style>
     :root {
-      --bg: #000;
-      --muted: #999;
-      --accent: #7c5cff;
-      --overlay-bg: rgba(0,0,0,0.85);
+      --bg: #0b0c10;
+      --text: #e8e8e8;
+      --muted: #8b8c91;
+      --accent: #4b8fbf;
+      --accent-hover: #66a5d8;
+      --overlay-bg: rgba(11, 12, 16, 0.9);
+      --panel-bg: rgba(20, 22, 27, 0.95);
     }
-    html,body {margin:0; height:100%; background:#000; color:#fff; font-family:monospace; overflow:hidden;}
-    .centered {display:flex; align-items:center; justify-content:center; height:100vh; text-align:center;}
+
+    html,body {
+      margin:0; height:100%;
+      background:var(--bg);
+      color:var(--text);
+      font-family:'Courier New', monospace;
+      overflow:hidden;
+    }
 
     /* ASCII loading screen */
     #loadingScreen {
-      position:fixed; inset:0; background:#000; color:#0f0;
-      display:flex; align-items:center; justify-content:center; flex-direction:column;
-      z-index:999; transition:opacity 2s ease;
+      position:fixed; inset:0;
+      background:var(--bg);
+      color:var(--accent);
+      display:flex; align-items:center; justify-content:center;
+      flex-direction:column;
+      z-index:999;
+      opacity:1;
+      transition:opacity 2s ease;
     }
-    pre {font-size:12px; line-height:12px;}
+    pre {font-size:12px; line-height:12px; opacity:0.8;}
 
     /* Main content */
-    #mainContent {opacity:0; pointer-events:none; transition:opacity 1.5s ease; padding:60px;}
-    #mainContent.show {opacity:1; pointer-events:auto; overflow:auto; height:100vh;}
-
-    header {text-align:center; margin-top:20px;}
-    header h1 {font-size:28px; margin-bottom:8px;}
-    header p {color:var(--muted); font-size:15px; max-width:700px; margin:auto;}
-
-    .about {max-width:800px; margin:60px auto; text-align:center; line-height:1.6;}
-    .about h2 {font-size:20px; margin-bottom:10px; color:var(--accent);}
-    .about p {color:#ccc; font-size:15px;}
-
-    /* Slide-out button and menu */
-    #menuBtn {
-      position:fixed; left:20px; top:50%; transform:translateY(-50%);
-      background:var(--accent); color:#fff; border:none;
-      padding:12px 16px; border-radius:8px; cursor:pointer; z-index:10;
-      font-weight:bold; transition:background 0.2s;
+    #mainContent {
+      opacity:0; pointer-events:none;
+      transition:opacity 1.5s ease;
+      padding:60px;
     }
-    #menuBtn:hover {background:#9a7cff;}
+    #mainContent.show {
+      opacity:1; pointer-events:auto;
+      overflow:auto; height:100vh;
+    }
 
+    header {
+      text-align:center; margin-top:20px;
+    }
+    header h1 {
+      font-size:28px; margin-bottom:8px;
+      color:var(--accent);
+      letter-spacing:1px;
+    }
+    header p {
+      color:var(--muted); font-size:15px;
+      max-width:700px; margin:auto;
+    }
+
+    .about {
+      max-width:800px; margin:60px auto;
+      text-align:center; line-height:1.6;
+      background:var(--panel-bg);
+      padding:20px; border-radius:10px;
+      border:1px solid #1a1d22;
+      box-shadow:0 0 10px rgba(0,0,0,0.3);
+    }
+    .about h2 {
+      font-size:20px; margin-bottom:10px;
+      color:var(--accent);
+    }
+    .about p {
+      color:var(--text); font-size:15px;
+    }
+
+    /* Menu button */
+    #menuBtn {
+      position:fixed; left:20px; top:50%;
+      transform:translateY(-50%);
+      background:var(--accent);
+      color:#fff; border:none;
+      padding:12px 16px;
+      border-radius:8px;
+      cursor:pointer;
+      z-index:10;
+      font-weight:bold;
+      transition:background 0.3s, box-shadow 0.3s;
+    }
+    #menuBtn:hover {
+      background:var(--accent-hover);
+      box-shadow:0 0 8px rgba(102,165,216,0.4);
+    }
+
+    /* Side Menu */
     #sideMenu {
-      position:fixed; left:-300px; top:0; width:260px; height:100%;
-      background:#111; border-right:1px solid #222;
-      padding:20px; transition:left 0.4s ease; z-index:9; overflow-y:auto;
+      position:fixed; left:-300px; top:0;
+      width:260px; height:100%;
+      background:var(--panel-bg);
+      border-right:1px solid #1f2328;
+      padding:20px;
+      transition:left 0.4s ease;
+      z-index:9;
+      overflow-y:auto;
     }
     #sideMenu.show {left:0;}
-    #sideMenu h3 {color:var(--accent);}
+    #sideMenu h3 {color:var(--accent); margin-bottom:15px;}
     #sideMenu ul {list-style:none; padding:0;}
     #sideMenu li {margin:15px 0;}
     #sideMenu a {
-      color:#ccc; text-decoration:none; font-size:15px;
+      color:var(--muted);
+      text-decoration:none;
+      font-size:15px;
       transition:color 0.2s;
     }
-    #sideMenu a:hover {color:var(--accent);}
+    #sideMenu a:hover {
+      color:var(--accent-hover);
+    }
 
     /* Popup overlay */
     #overlay {
-      position:fixed; inset:0; background:var(--overlay-bg);
-      display:none; align-items:center; justify-content:center; z-index:50;
+      position:fixed; inset:0;
+      background:var(--overlay-bg);
+      display:none;
+      align-items:center; justify-content:center;
+      z-index:50;
     }
     #overlay.show {display:flex;}
     .popup {
-      background:#111; padding:20px; border-radius:10px;
-      max-width:700px; max-height:80vh; overflow:auto;
-      border:1px solid #222;
+      background:var(--panel-bg);
+      padding:20px; border-radius:10px;
+      max-width:700px; max-height:80vh;
+      overflow:auto;
+      border:1px solid #1f2328;
+      box-shadow:0 0 15px rgba(0,0,0,0.5);
+      position:relative;
     }
-    .popup h2 {margin-top:0;}
+    .popup h2 {margin-top:0; color:var(--accent);}
     .closeBtn {
-      background:none; border:none; color:var(--muted);
-      font-size:20px; cursor:pointer; position:absolute; top:20px; right:30px;
+      background:none; border:none;
+      color:var(--muted);
+      font-size:20px;
+      cursor:pointer;
+      position:absolute;
+      top:20px; right:30px;
+      transition:color 0.2s;
     }
+    .closeBtn:hover {color:var(--accent);}
   </style>
 </head>
 <body>
 
+  <!-- ASCII LOADING SCREEN -->
   <div id="loadingScreen">
     <pre>
 ░▒▓██████▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓██████▓▒░  
@@ -94,10 +169,11 @@
     </pre>
   </div>
 
+  <!-- MAIN PAGE -->
   <div id="mainContent">
     <header>
       <h1>Czech Immigrants in Chicago</h1>
-      <p>Exploring the heritage, challenges, and contributions of Czech immigrants who helped shape Chicago’s identity.</p>
+      <p>Exploring the heritage, challenges, and contributions of Czech immigrants who helped shape Chicago</p>
     </header>
 
     <section class="about">
@@ -105,7 +181,7 @@
       <p>My name is Joseph, and I chose to research Czech immigrants in Chicago because of my interest in immigrant communities and how they influence local culture. I wanted to learn how traditions, food, and language carried from Europe helped shape modern Chicago neighborhoods.</p>
 
       <h2>Why I Picked This Topic</h2>
-      <p>This topic connects history, sociology, and culture. I’ve always been fascinated by how immigration waves create lasting impacts on cities from architecture to cuisine to social values. The Czech community’s story is one of resilience and community strength.</p>
+      <p>This topic connects history, language, and culture. I’ve always been fascinated by how immigration waves create lasting impacts on cities—from architecture to cuisine to social values. The Czech community’s story is one of resilience and community strength.</p>
     </section>
 
     <button id="menuBtn">☰</button>
@@ -120,6 +196,7 @@
     </nav>
   </div>
 
+  <!-- POPUP OVERLAY -->
   <div id="overlay">
     <div class="popup">
       <button class="closeBtn" id="closeBtn">✕</button>
@@ -133,8 +210,12 @@
     const main = document.getElementById('mainContent');
     const menuBtn = document.getElementById('menuBtn');
     const sideMenu = document.getElementById('sideMenu');
+    const overlay = document.getElementById('overlay');
+    const popupTitle = document.getElementById('popupTitle');
+    const popupContent = document.getElementById('popupContent');
+    const closeBtn = document.getElementById('closeBtn');
 
-    // Simulate loading delay and fade out
+    // Fade out loading screen
     setTimeout(() => {
       loading.style.opacity = '0';
       setTimeout(() => {
@@ -148,12 +229,7 @@
       sideMenu.classList.toggle('show');
     });
 
-    // Overlay logic
-    const overlay = document.getElementById('overlay');
-    const popupTitle = document.getElementById('popupTitle');
-    const popupContent = document.getElementById('popupContent');
-    const closeBtn = document.getElementById('closeBtn');
-
+    // Load content into popup
     document.querySelectorAll('#sideMenu a').forEach(link => {
       link.addEventListener('click', async e => {
         e.preventDefault();
@@ -166,11 +242,12 @@
           const text = await res.text();
           popupContent.innerHTML = text;
         } catch(e) {
-          popupContent.innerHTML = '<p style=\"color:var(--muted)\">Error loading file.</p>';
+          popupContent.innerHTML = '<p style="color:var(--muted)">Error loading file.</p>';
         }
       });
     });
 
+    // Close popup
     closeBtn.addEventListener('click', () => overlay.classList.remove('show'));
     overlay.addEventListener('click', (e) => { if(e.target === overlay) overlay.classList.remove('show'); });
   </script>
