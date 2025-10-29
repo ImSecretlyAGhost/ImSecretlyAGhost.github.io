@@ -24,6 +24,16 @@
       font-family:'Courier New', monospace;
       overflow:hidden;
     }
+    /* Footer fade-in */
+    #siteFooter {
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+    #siteFooter.show {
+      opacity: 1;
+    }
+
+  
 
     /* ASCII loading screen */
     #loadingScreen {
@@ -236,62 +246,16 @@ C:::::C                I::::I    I::::IC:::::C
     <button id="menuBtn">☰</button>
   </div>
 
-  <!-- POPUP OVERLAY -->
-  <div id="overlay">
-    <div class="popup">
-      <button class="closeBtn" id="closeBtn">✕</button>
-      <h2 id="popupTitle">Title</h2>
-      <div id="popupContent"><p>Loading...</p></div>
-    </div>
+ <!-- POPUP OVERLAY -->
+<div id="overlay">
+  <div class="popup">
+    <button class="closeBtn" id="closeBtn">✕</button>
+    <h2 id="popupTitle">Title</h2>
+    <div id="popupContent"><p>Loading...</p></div>
   </div>
+</div>
 
-  <script>
-    const loading = document.getElementById('loadingScreen');
-    const main = document.getElementById('mainContent');
-    const menuBtn = document.getElementById('menuBtn');
-    const sideMenu = document.getElementById('sideMenu');
-    const overlay = document.getElementById('overlay');
-    const popupTitle = document.getElementById('popupTitle');
-    const popupContent = document.getElementById('popupContent');
-    const closeBtn = document.getElementById('closeBtn');
-
-    // Fade out loading screen
-    setTimeout(() => {
-      loading.style.opacity = '0';
-      setTimeout(() => {
-        loading.style.display = 'none';
-        main.classList.add('show');
-      }, 2000);
-    }, 10000);
-
-    // Toggle side menu (slide in/out)
-    menuBtn.addEventListener('click', () => {
-      sideMenu.classList.toggle('show');
-    });
-
-    // Load content into popup
-    document.querySelectorAll('#sideMenu a').forEach(link => {
-      link.addEventListener('click', async e => {
-        e.preventDefault();
-        overlay.classList.add('show');
-        popupTitle.textContent = link.dataset.title;
-        popupContent.innerHTML = '<p>Loading...</p>';
-        try {
-          const res = await fetch('/pages/' + link.dataset.file);
-          if(!res.ok) throw new Error('Not found');
-          const text = await res.text();
-          popupContent.innerHTML = text;
-        } catch(e) {
-          popupContent.innerHTML = '<p style="color:var(--muted)">Error loading file.</p>';
-        }
-      });
-    });
-
-    // Close popup
-    closeBtn.addEventListener('click', () => overlay.classList.remove('show'));
-    overlay.addEventListener('click', (e) => { if(e.target === overlay) overlay.classList.remove('show'); });
-  </script>
-
+<!-- FOOTER -->
 <footer id="siteFooter" role="contentinfo" aria-label="Site footer">
   <p id="footerLine">&copy; <span id="footerYear"></span> Czech Immigrants in Chicago - Created by Joseph</p>
   <p>
@@ -300,6 +264,59 @@ C:::::C                I::::I    I::::IC:::::C
   </p>
 </footer>
 
+<!-- SCRIPT -->
+<script>
+  const loading = document.getElementById('loadingScreen');
+  const main = document.getElementById('mainContent');
+  const menuBtn = document.getElementById('menuBtn');
+  const sideMenu = document.getElementById('sideMenu');
+  const overlay = document.getElementById('overlay');
+  const popupTitle = document.getElementById('popupTitle');
+  const popupContent = document.getElementById('popupContent');
+  const closeBtn = document.getElementById('closeBtn');
+  const footerYear = document.getElementById('footerYear');
 
+  // Set dynamic year for footer
+  if (footerYear) footerYear.textContent = new Date().getFullYear();
+
+// Fade out loading screen and show main content + footer
+setTimeout(() => {
+  loading.style.opacity = '0';
+  setTimeout(() => {
+    loading.style.display = 'none';
+    main.classList.add('show');
+    document.getElementById('siteFooter').classList.add('show');
+  }, 2000);
+}, 10000);
+
+  // Toggle side menu
+  menuBtn.addEventListener('click', () => {
+    sideMenu.classList.toggle('show');
+  });
+
+  // Load popup content
+  document.querySelectorAll('#sideMenu a').forEach(link => {
+    link.addEventListener('click', async e => {
+      e.preventDefault();
+      overlay.classList.add('show');
+      popupTitle.textContent = link.dataset.title;
+      popupContent.innerHTML = '<p>Loading...</p>';
+      try {
+        const res = await fetch('/pages/' + link.dataset.file);
+        if (!res.ok) throw new Error('Not found');
+        const text = await res.text();
+        popupContent.innerHTML = text;
+      } catch (err) {
+        popupContent.innerHTML = '<p style="color:var(--muted)">Error loading file.</p>';
+      }
+    });
+  });
+
+  // Close popup
+  closeBtn.addEventListener('click', () => overlay.classList.remove('show'));
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('show');
+  });
+</script>
 </body>
 </html>
